@@ -15,6 +15,8 @@ namespace AkkaSample.Api
     {
         private const string actorSystemName = "akka-sample-api";
         private const string echoActorName = "echo";
+        private const string getActorName = "getter";
+        private const string putActorName = "putter";
 
         public Startup(IConfiguration configuration)
         {
@@ -77,8 +79,20 @@ namespace AkkaSample.Api
             services.AddSingleton<EchoActorProvider>(provider =>
             {
                 var actorSystem = provider.GetService<ActorSystem>();
-                var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), echoActorName);
-                return () => echoActor;
+                var actor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), echoActorName);
+                return () => actor;
+            });
+            services.AddSingleton<GetActorProvider>(provider =>
+            {
+                var actorSystem = provider.GetService<ActorSystem>();
+                var actor = actorSystem.ActorOf(Props.Create<GetActor>().WithRouter(FromConfig.Instance), getActorName);
+                return () => actor;
+            });
+            services.AddSingleton<PutActorProvider>(provider =>
+            {
+                var actorSystem = provider.GetService<ActorSystem>();
+                var actor = actorSystem.ActorOf(Props.Create<PutActor>().WithRouter(FromConfig.Instance), putActorName);
+                return () => actor;
             });
         }
 
