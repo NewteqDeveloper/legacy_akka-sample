@@ -45,7 +45,6 @@ namespace AkkaSample.Api
                 // var echoActor = actorSystem.ActorOf<EchoActor>("echo");
                 //var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>()
                 //    .WithRouter(new RoundRobinPool(5)), "echo");
-                //var instance = FromConfig.Instance;
                 var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), "echo");
                 return () => echoActor;
             });
