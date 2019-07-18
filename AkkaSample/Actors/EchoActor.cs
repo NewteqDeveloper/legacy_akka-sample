@@ -36,9 +36,30 @@ namespace AkkaSample.Actors
 
             if (child != null)
             {
+                WriteMessage($"Telling the child :: {useMessage}");
                 child.Tell($"Telling {useMessage}");
-                child.Forward($"Forwarding {useMessage}");
+                // WriteMessage($"Forwarding to the child :: {useMessage}");
+                // child.Forward($"Forwarding {useMessage}");
             }
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            return new OneForOneStrategy(
+                5,
+                TimeSpan.FromMilliseconds(1),
+                (ex) =>
+                {
+                    switch (ex)
+                    {
+                        case ArithmeticException ae:
+                            return Directive.Resume;
+                        case NullReferenceException ne:
+                            return Directive.Restart;
+                        default:
+                            return Directive.Stop;
+                    }
+                });
         }
 
         private void WriteMessage(string message)
