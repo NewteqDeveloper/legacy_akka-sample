@@ -36,8 +36,8 @@ namespace AkkaSample.Api
             });
             var akkaConfig = ConfigurationLoader.Load();
 
-            // services.AddSingleton(x => ActorSystem.Create("my-system", config));
-            services.AddSingleton(x => ActorSystem.Create("my-system", akkaConfig));
+            services.AddSingleton(x => ActorSystem.Create("my-system", config));
+            // services.AddSingleton(x => ActorSystem.Create("my-system", akkaConfig));
             // services.AddSingleton(x => ActorSystem.Create("my-system"));
             services.AddSingleton<EchoActorProvider>(provider =>
             {

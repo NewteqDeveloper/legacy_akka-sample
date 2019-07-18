@@ -18,7 +18,7 @@ namespace AkkaSample.Api.Configuration
 
     public class DeploymentConfig
     {
-        [JsonProperty(PropertyName = "//my-system/user/echo")]
+        [JsonProperty(PropertyName = "/echo")]
         public ActorSettingsConfig echo { get; set; }
     }
 
