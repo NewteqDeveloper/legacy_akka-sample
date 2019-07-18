@@ -8,6 +8,8 @@ namespace AkkaSample.Actors
 {
     public class EchoActor : UntypedActor
     {
+        private IActorRef child;
+
         protected override void PreStart()
         {
             base.PreStart();
@@ -22,7 +24,21 @@ namespace AkkaSample.Actors
 
         protected override void OnReceive(object message)
         {
-            WriteMessage($"Message has been received :: {message}");
+            var useMessage = message.ToString();
+            WriteMessage($"Message has been received :: {useMessage}");
+            if (useMessage.ToLower() == "create")
+            {
+                if (child == null)
+                {
+                    child = Context.ActorOf<EchoChildActor>();
+                }
+            }
+
+            if (child != null)
+            {
+                child.Tell($"Telling {useMessage}");
+                child.Forward($"Forwarding {useMessage}");
+            }
         }
 
         private void WriteMessage(string message)
