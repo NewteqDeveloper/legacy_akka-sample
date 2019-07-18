@@ -34,9 +34,16 @@ namespace AkkaSample.Actors
                 }
             }
 
+            if (useMessage.ToLower().Contains("me"))
+            {
+                child.Tell(PoisonPill.Instance);
+            }
+
             if (child != null)
             {
+                WriteMessage($"Telling the child: {useMessage}");
                 child.Tell($"Telling {useMessage}");
+                WriteMessage($"Forwarding to the child: {useMessage}");
                 child.Forward($"Forwarding {useMessage}");
             }
         }

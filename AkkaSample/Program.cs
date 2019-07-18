@@ -13,7 +13,7 @@ namespace AkkaSample
             echo.Tell("Hello World");
             echo.Tell("create");
             echo.Tell("Hello World Again");
-            echo.Tell("Hello World Again Again");
+            echo.Tell("Hello World, it's me");
             echo.Tell(PoisonPill.Instance);
 
             Console.ReadLine();
