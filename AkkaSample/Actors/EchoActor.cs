@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace AkkaSample.Actors
 {
@@ -26,7 +27,7 @@ namespace AkkaSample.Actors
 
         private void WriteMessage(string message)
         {
-            Console.WriteLine($"Action Message from {nameof(EchoActor)}. This message is:\r\n--{message}");
+            Console.WriteLine($"{message}");
         }
     }
 }
