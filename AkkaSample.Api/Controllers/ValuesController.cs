@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
+using AkkaSample.Api.Actors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AkkaSample.Api.Controllers
@@ -10,10 +12,17 @@ namespace AkkaSample.Api.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
+        private readonly IActorRef echoActor;
+
+        public ValuesController(EchoActorProvider echoActor)
+        {
+            this.echoActor = echoActor();
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            echoActor.Tell("Hello World");
             return new string[] { "value1", "value2" };
         }
 

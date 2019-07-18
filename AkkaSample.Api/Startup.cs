@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
+using Akka.Configuration;
+using Akka.Routing;
+using AkkaSample.Api.Actors;
+using AkkaSample.Api.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -21,15 +26,41 @@ namespace AkkaSample.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            var config = ConfigurationFactory.FromObject(new
+            {
+                akka = Configuration.GetSection("Akka").Get<AkkaConfig>()
+            });
+
+            // services.AddSingleton(x => ActorSystem.Create("my-system", config));
+            services.AddSingleton(x => ActorSystem.Create("my-system"));
+            services.AddSingleton<EchoActorProvider>(provider =>
+            {
+                var actorSystem = provider.GetService<ActorSystem>();
+                // var echoActor = actorSystem.ActorOf<EchoActor>("echo");
+                var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>()
+                    .WithRouter(new RoundRobinPool(5)), "echo");
+                // var instance = FromConfig.Instance;
+                // var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), "echo");
+                return () => echoActor;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                app.ApplicationServices.GetService<ActorSystem>();
+            });
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
+            });
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
