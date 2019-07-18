@@ -12,7 +12,6 @@ namespace AkkaSample.Api.Actors
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Starting this echo actor");
-            Console.WriteLine(this.Self.Path.Name);
             Console.ResetColor();
         }
 
