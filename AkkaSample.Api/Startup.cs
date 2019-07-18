@@ -26,7 +26,7 @@ namespace AkkaSample.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            CreateActorsWithAppSettings(services);
+            CreateActorsWithAkkaConf(services);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
