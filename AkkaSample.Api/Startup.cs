@@ -6,7 +6,7 @@ using Akka.Actor;
 using Akka.Configuration;
 using Akka.Routing;
 using AkkaSample.Api.Actors;
-using AkkaSample.Api.Config;
+using AkkaSample.Api.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,17 +34,19 @@ namespace AkkaSample.Api
             {
                 akka = Configuration.GetSection("Akka").Get<AkkaConfig>()
             });
+            var akkaConfig = ConfigurationLoader.Load();
 
             // services.AddSingleton(x => ActorSystem.Create("my-system", config));
-            services.AddSingleton(x => ActorSystem.Create("my-system"));
+            services.AddSingleton(x => ActorSystem.Create("my-system", akkaConfig));
+            // services.AddSingleton(x => ActorSystem.Create("my-system"));
             services.AddSingleton<EchoActorProvider>(provider =>
             {
                 var actorSystem = provider.GetService<ActorSystem>();
                 // var echoActor = actorSystem.ActorOf<EchoActor>("echo");
-                var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>()
-                    .WithRouter(new RoundRobinPool(5)), "echo");
-                // var instance = FromConfig.Instance;
-                // var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), "echo");
+                //var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>()
+                //    .WithRouter(new RoundRobinPool(5)), "echo");
+                //var instance = FromConfig.Instance;
+                var echoActor = actorSystem.ActorOf(Props.Create<EchoActor>().WithRouter(FromConfig.Instance), "echo");
                 return () => echoActor;
             });
         }

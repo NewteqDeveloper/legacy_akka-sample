@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AkkaSample.Api.Config
+namespace AkkaSample.Api.Configuration
 {
     public class AkkaConfig
     {
@@ -18,12 +18,13 @@ namespace AkkaSample.Api.Config
 
     public class DeploymentConfig
     {
-        [JsonProperty(PropertyName = "/user/echo")]
+        [JsonProperty(PropertyName = "//my-system/user/echo")]
         public ActorSettingsConfig echo { get; set; }
     }
 
     public class ActorSettingsConfig
     {
+        public string router { get; set; }
         [JsonProperty(PropertyName = "nr-of-instances")]
         public int nrofinstances { get; set; }
         public ResizerConfig resizer { get; set; }
