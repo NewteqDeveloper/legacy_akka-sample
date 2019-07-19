@@ -1,8 +1,10 @@
 ﻿using Akka.Actor;
 using Akka.Configuration;
+using Akka.DI.Core;
 using Akka.Routing;
 using AkkaSample.Api.Actors;
 using AkkaSample.Api.Configuration;
+using AkkaSample.Api.Deps;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +30,12 @@ namespace AkkaSample.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSingleton<ICustomMouse, CustomMouse>();
+
             CreateActorsWithAkkaConf(services);
+
+            var provider = services.BuildServiceProvider();
+            new KestrelDependencyResolver(provider, provider.GetService<ActorSystem>());
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
@@ -91,7 +98,8 @@ namespace AkkaSample.Api
             services.AddSingleton<PutActorProvider>(provider =>
             {
                 var actorSystem = provider.GetService<ActorSystem>();
-                var actor = actorSystem.ActorOf(Props.Create<PutActor>().WithRouter(FromConfig.Instance), putActorName);
+                // var actor = actorSystem.ActorOf(Props.Create<PutActor>().WithRouter(FromConfig.Instance), putActorName);
+                var actor = actorSystem.ActorOf(actorSystem.DI().Props<PutActor>().WithRouter(FromConfig.Instance), putActorName);
                 return () => actor;
             });
         }
