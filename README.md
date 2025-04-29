@@ -1,3 +1,6 @@
+# Migrated
+Moved to: https://codeberg.org/newteq_github_archives/sample-akka-dotnet-core
+
 # Akka DotNet Core Example
 It is a basic console application that demonstrates some of the ways to interact with Akka
 
